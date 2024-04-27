@@ -24,11 +24,14 @@ public class JumpConnector : MonoBehaviour
                 _closestHinge.connectedBody = _playerRb;
                 _playerRb.constraints = RigidbodyConstraints2D.None;
                 _playerMovement.enabled = false;
-                _playerRb.gravityScale = 1;
+                _playerRb.gravityScale = 2;
 
             } else
             {
                 _closestHinge.connectedBody = null;
+                transform.rotation = Quaternion.identity;
+                _playerRb.constraints = RigidbodyConstraints2D.FreezeRotation;
+                _playerMovement.enabled = true;
             }
         }
     }
