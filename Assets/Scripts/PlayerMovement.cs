@@ -29,9 +29,10 @@ public class PlayerMovement : MonoBehaviour
 	//but can only be privately written to.
 	public bool IsFacingRight { get; private set; }
 	public bool IsJumping { get; private set; }
-	public bool IsWallJumping { get; private set; }
-	public bool IsDashing { get; private set; }
-	public bool IsSliding { get; private set; }
+	[field: SerializeField] public bool IsWallClimbing { get; set; }
+	[field: SerializeField] public bool IsWallJumping { get; private set; }
+	[field: SerializeField] public bool IsDashing { get; private set; }
+	[field: SerializeField] public bool IsSliding { get; private set; }
 
 	//Timers (also all fields, could be private and a method returning a bool could be used)
 	public float LastOnGroundTime { get; private set; }
@@ -94,6 +95,8 @@ public class PlayerMovement : MonoBehaviour
 
 	private void Update()
 	{
+		HandleWallClimbing();
+		
         #region TIMERS
         LastOnGroundTime -= Time.deltaTime;
 		LastOnWallTime -= Time.deltaTime;
@@ -589,14 +592,70 @@ public class PlayerMovement : MonoBehaviour
 
 	public bool CanSlide()
     {
-		if (LastOnWallTime > 0 && !IsJumping && !IsWallJumping && !IsDashing && LastOnGroundTime <= 0)
+		if (LastOnWallTime > 0 && !IsJumping && !IsWallJumping && !IsDashing && !IsWallClimbing && LastOnGroundTime <= 0)
 			return true;
 		else
 			return false;
 	}
     #endregion
+    
+    private void HandleWallClimbing()
+    {
+	    if (CanStartWallClinging())
+	    {
+		    // Применить логику лазания по стене, включая движение вверх/вниз по стене и обработку прыжка от стены
+		    if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.J))
+		    {
+			    // Выполнить прыжок от стены
+			    WallJump(1); ///////////
+			    StopWallClinging();
+		    }
+		    else if (Input.GetKey(KeyCode.W))
+		    {
+			    StartWallClinging();
+			    // Движение вверх по стене
+			    RB.velocity = new Vector2(RB.velocity.x, Data.wallClimbSpeed);
+		    }
+	    }
+    }
 
+    private bool CanStartWallClinging()
+    {
+	    if (IsDashing)  // Не давайте начать лазать по стене во время дэша
+	    {
+		    return false;
+	    }
 
+	    if (IsJumping && RB.velocity.y > 0)  // Если игрок уже в состоянии прыжка, отключите лазание по стене
+	    {
+		    return false;
+	    }
+	    
+	    if (LastOnWallRightTime > 0 || LastOnWallLeftTime > 0)
+	    {
+		    // Это условие проверяет, что игрок находится рядом со стеной и в данный момент не двигается вправо/влево
+		    return true;
+	    }
+
+	    return false;
+    }
+
+    private void StartWallClinging()
+    {
+	    // Начать лазить по стене
+	    IsWallClimbing = true;
+	    // Отключите гравитацию по умолчанию, чтобы игрок не падал вниз
+	    SetGravityScale(0);
+    }
+
+    private void StopWallClinging()
+    {
+	    // Прекратить лазить по стене
+	    IsWallClimbing = false;
+	    // Вернуть обычное значение гравитации
+	    SetGravityScale(Data.gravityScale);
+    }
+    
     #region EDITOR METHODS
     private void OnDrawGizmosSelected()
     {

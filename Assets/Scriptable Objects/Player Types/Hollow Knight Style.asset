@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Hollow Knight Style
   m_EditorClassIdentifier: 
   gravityStrength: -52
-  gravityScale: 1.7333333
+  gravityScale: 5.3007135
   fallGravityMult: 2
   maxFallSpeed: 18
   fastFallGravityMult: 1
@@ -52,3 +52,4 @@ MonoBehaviour:
   dashEndRunLerp: 0.47
   dashRefillTime: 0.1
   dashInputBufferTime: 0.12
+  wallClimbSpeed: 8
