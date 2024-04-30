@@ -35,6 +35,10 @@ public class JumpConnector : MonoBehaviour
 
     private void GrabJoint()
     {
+        if (_closestHinge == null) return;
+        
+        _closestHinge.transform.position = transform.position;
+        _closestHinge.enabled = true;
         _closestHinge.connectedBody = _playerRb;
         _playerRb.constraints = RigidbodyConstraints2D.None;
         _playerMovement.enabled = false;
@@ -48,11 +52,14 @@ public class JumpConnector : MonoBehaviour
         transform.rotation = Quaternion.identity;
         _playerRb.constraints = RigidbodyConstraints2D.FreezeRotation;
         _playerMovement.enabled = true;
+        _closestHinge.enabled = false;
         _isGrabed = false;
     }
 
     private void SetClosestJoint()
     {
+        _closestHinge = null;
+        
         var colliders = GetAllColliders();
         var joints = GetHingeJoints(colliders);
 
