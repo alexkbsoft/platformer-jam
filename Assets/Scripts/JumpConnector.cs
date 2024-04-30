@@ -1,64 +1,71 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class JumpConnector : MonoBehaviour
 {
-    [SerializeField] private HingeJoint2D _myHinge;
-    [SerializeField] private Rigidbody2D _closestHinge;
+    [SerializeField] private HingeJoint2D _closestHinge;
     [SerializeField] [Range(0, 50)] private float _connectionRadius;
     [SerializeField] private LayerMask _layer;
 
     private PlayerMovement _playerMovement;
     private Rigidbody2D _playerRb;
+    private bool _isGrabed;
 
     private void Start()
     {
         _playerRb = GetComponent<Rigidbody2D>();
         _playerMovement = GetComponent<PlayerMovement>();
-        _myHinge ??= GetComponent<HingeJoint2D>();
-        _myHinge.enabled = false;
     }
 
     private void Update()
     {
         if (Input.GetKeyUp(KeyCode.E))
         {
-            SetClosestJoint();
-            if (_closestHinge != null) GrabJoint();
+            if (!_isGrabed)
+            {
+                SetClosestJoint();
+                GrabJoint();
+            }
+            else
+            {
+                FreeJoint();
+            }
         }
     }
 
     private void GrabJoint()
     {
-        if (_myHinge.connectedBody == null)
-        {
-            _closestHinge.transform.position = transform.position;
-            _myHinge.enabled = true;
-            _myHinge.connectedBody = _closestHinge;
-            _playerRb.constraints = RigidbodyConstraints2D.None;
-            _playerMovement.enabled = false;
-            _playerRb.gravityScale = 2;
-        }
-        else
-        {
-            _myHinge.connectedBody = null;
-            _myHinge.enabled = false;
-            transform.rotation = Quaternion.identity;
-            _playerRb.constraints = RigidbodyConstraints2D.FreezeRotation;
-            _playerMovement.enabled = true;
-        }
+        if (_closestHinge == null) return;
+        
+        _closestHinge.transform.position = transform.position;
+        _closestHinge.enabled = true;
+        _closestHinge.connectedBody = _playerRb;
+        _playerRb.constraints = RigidbodyConstraints2D.None;
+        _playerMovement.enabled = false;
+        _playerRb.gravityScale = 2;
+        _isGrabed = true;
+    }
+
+    private void FreeJoint()
+    {
+        _closestHinge.connectedBody = null;
+        transform.rotation = Quaternion.identity;
+        _playerRb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        _playerMovement.enabled = true;
+        _closestHinge.enabled = false;
+        _isGrabed = false;
     }
 
     private void SetClosestJoint()
     {
+        _closestHinge = null;
+        
         var colliders = GetAllColliders();
         var joints = GetHingeJoints(colliders);
-        
+
         if (joints.Length == 0) return;
-        
-        _closestHinge = GetClosestJoint(joints).GetComponent<Rigidbody2D>();
+
+        _closestHinge = GetClosestJoint(joints);
     }
 
     private Collider2D[] GetAllColliders() =>
@@ -69,16 +76,17 @@ public class JumpConnector : MonoBehaviour
         var joints = new List<HingeJoint2D>();
 
         foreach (var c in colliders)
-            if (c.TryGetComponent(out HingeJoint2D joint)) joints.Add(joint);
+            if (c.TryGetComponent(out HingeJoint2D joint))
+                joints.Add(joint);
 
         return joints.ToArray();
     }
-    
+
     private HingeJoint2D GetClosestJoint(HingeJoint2D[] joints)
     {
         var closestJoint = joints[0];
         var distance = Vector2.Distance(transform.position, closestJoint.transform.position);
-        
+
         foreach (var joint in joints)
         {
             if (Vector2.Distance(transform.position, joint.transform.position) < distance)
@@ -87,7 +95,7 @@ public class JumpConnector : MonoBehaviour
 
         return closestJoint;
     }
-    
+
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
