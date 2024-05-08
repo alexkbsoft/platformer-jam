@@ -9,6 +9,7 @@
 using System.Collections;
 using UnityEngine;
 
+
 public class PlayerMovement : MonoBehaviour
 {
 	//Scriptable object which holds all the player's movement parameters. If you don't want to use it
@@ -18,7 +19,7 @@ public class PlayerMovement : MonoBehaviour
 	public Vector3 GroundChechPos => _groundCheckPoint.transform.position;
 
 	#region COMPONENTS
-    public Rigidbody2D RB { get; private set; }
+	public Rigidbody2D RB { get; private set; }
 	//Script to handle all player animations, all references can be safely removed if you're importing into your own project.
 	public PlayerAnimator AnimHandler { get; private set; }
 	#endregion
@@ -66,7 +67,7 @@ public class PlayerMovement : MonoBehaviour
 
 	#region CHECK PARAMETERS
 	//Set all of these up in the inspector
-	[Header("Checks")] 
+	[Header("Checks")]
 	[SerializeField] private Transform _groundCheckPoint;
 	//Size of groundCheck depends on the size of your character generally you want them slightly small than width (for ground) and height (for the wall check)
 	[SerializeField] private Vector2 _groundCheckSize = new Vector2(0.49f, 0.03f);
@@ -74,14 +75,14 @@ public class PlayerMovement : MonoBehaviour
 	[SerializeField] private Transform _frontWallCheckPoint;
 	[SerializeField] private Transform _backWallCheckPoint;
 	[SerializeField] private Vector2 _wallCheckSize = new Vector2(0.5f, 1f);
-    #endregion
+	#endregion
 
-    #region LAYERS & TAGS
-    [Header("Layers & Tags")]
+	#region LAYERS & TAGS
+	[Header("Layers & Tags")]
 	[SerializeField] private LayerMask _groundLayer;
 	#endregion
 
-    private void Awake()
+	private void Awake()
 	{
 		RB = GetComponent<Rigidbody2D>();
 		AnimHandler = GetComponent<PlayerAnimator>();
@@ -96,9 +97,9 @@ public class PlayerMovement : MonoBehaviour
 	private void Update()
 	{
 		HandleWallClimbing();
-		
-        #region TIMERS
-        LastOnGroundTime -= Time.deltaTime;
+
+		#region TIMERS
+		LastOnGroundTime -= Time.deltaTime;
 		LastOnWallTime -= Time.deltaTime;
 		LastOnWallRightTime -= Time.deltaTime;
 		LastOnWallLeftTime -= Time.deltaTime;
@@ -114,10 +115,10 @@ public class PlayerMovement : MonoBehaviour
 		if (_moveInput.x != 0)
 			CheckDirectionToFace(_moveInput.x > 0);
 
-		if(Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.C) || Input.GetKeyDown(KeyCode.J))
-        {
+		if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.C) || Input.GetKeyDown(KeyCode.J))
+		{
 			OnJumpInput();
-        }
+		}
 
 		if (Input.GetKeyUp(KeyCode.Space) || Input.GetKeyUp(KeyCode.C) || Input.GetKeyUp(KeyCode.J))
 		{
@@ -136,22 +137,22 @@ public class PlayerMovement : MonoBehaviour
 			//Ground Check
 			if (Physics2D.OverlapBox(_groundCheckPoint.position, _groundCheckSize, 0, _groundLayer)) //checks if set box overlaps with ground
 			{
-				if(LastOnGroundTime < -0.1f)
-                {
+				if (LastOnGroundTime < -0.1f)
+				{
 					AnimHandler.justLanded = true;
-                }
+				}
 
 				LastOnGroundTime = Data.coyoteTime; //if so sets the lastGrounded to coyoteTime
-            }		
+			}
 
 			//Right Wall Check
 			if (((Physics2D.OverlapBox(_frontWallCheckPoint.position, _wallCheckSize, 0, _groundLayer) && IsFacingRight)
-					|| (Physics2D.OverlapBox(_backWallCheckPoint.position, _wallCheckSize, 0, _groundLayer) && !IsFacingRight)) && !IsWallJumping)
+				 || (Physics2D.OverlapBox(_backWallCheckPoint.position, _wallCheckSize, 0, _groundLayer) && !IsFacingRight)) && !IsWallJumping)
 				LastOnWallRightTime = Data.coyoteTime;
 
 			//Right Wall Check
 			if (((Physics2D.OverlapBox(_frontWallCheckPoint.position, _wallCheckSize, 0, _groundLayer) && !IsFacingRight)
-				|| (Physics2D.OverlapBox(_backWallCheckPoint.position, _wallCheckSize, 0, _groundLayer) && IsFacingRight)) && !IsWallJumping)
+				 || (Physics2D.OverlapBox(_backWallCheckPoint.position, _wallCheckSize, 0, _groundLayer) && IsFacingRight)) && !IsWallJumping)
 				LastOnWallLeftTime = Data.coyoteTime;
 
 			//Two checks needed for both left and right walls since whenever the play turns the wall checkPoints swap sides
@@ -173,7 +174,7 @@ public class PlayerMovement : MonoBehaviour
 		}
 
 		if (LastOnGroundTime > 0 && !IsJumping && !IsWallJumping)
-        {
+		{
 			_isJumpCut = false;
 
 			_isJumpFalling = false;
@@ -208,7 +209,7 @@ public class PlayerMovement : MonoBehaviour
 				_bonusJumpsLeft = Data.BonusJumpCount;
 
 
-                WallJump(_lastWallJumpDir);
+				WallJump(_lastWallJumpDir);
 			}
 			else if (LastPressedJumpTime > 0 && _bonusJumpsLeft > 0)
 			{
@@ -216,14 +217,14 @@ public class PlayerMovement : MonoBehaviour
 				IsWallJumping = false;
 				_isJumpCut = false;
 				_isJumpFalling = false;
-				
+
 				_bonusJumpsLeft--;
 
 				Jump();
 
-                AnimHandler.startedJumping = true;
-            }
-        }
+				AnimHandler.startedJumping = true;
+			}
+		}
 		#endregion
 
 		#region DASH CHECKS
@@ -300,12 +301,12 @@ public class PlayerMovement : MonoBehaviour
 			SetGravityScale(0);
 		}
 		#endregion
-    
+
 		AnimHandler.onGround = !IsJumping && !IsDashing && !IsWallJumping && !_isJumpFalling && LastOnGroundTime > 0;
 		AnimHandler.isDashing = IsDashing && !IsSliding;
 	}
 
-    private void FixedUpdate()
+	private void FixedUpdate()
 	{
 		//Handle Run
 		if (!IsDashing)
@@ -323,11 +324,11 @@ public class PlayerMovement : MonoBehaviour
 		//Handle Slide
 		if (IsSliding)
 			Slide();
-    }
+	}
 
-    #region INPUT CALLBACKS
+	#region INPUT CALLBACKS
 	//Methods which whandle input detected in Update()
-    public void OnJumpInput()
+	public void OnJumpInput()
 	{
 		LastPressedJumpTime = Data.jumpInputBufferTime;
 	}
@@ -342,33 +343,33 @@ public class PlayerMovement : MonoBehaviour
 	{
 		LastPressedDashTime = Data.dashInputBufferTime;
 	}
-    #endregion
+	#endregion
 
-    #region GENERAL METHODS
-    public void SetGravityScale(float scale)
+	#region GENERAL METHODS
+	public void SetGravityScale(float scale)
 	{
 		RB.gravityScale = scale;
 	}
 
 	private void Sleep(float duration)
-    {
+	{
 		//Method used so we don't need to call StartCoroutine everywhere
 		//nameof() notation means we don't need to input a string directly.
 		//Removes chance of spelling mistakes and will improve error messages if any
 		StartCoroutine(nameof(PerformSleep), duration);
-    }
+	}
 
 	private IEnumerator PerformSleep(float duration)
-    {
+	{
 		Time.timeScale = 0;
 		yield return new WaitForSecondsRealtime(duration); //Must be Realtime since timeScale with be 0 
 		Time.timeScale = 1;
 	}
-    #endregion
+	#endregion
 
 	//MOVEMENT METHODS
-    #region RUN METHODS
-    private void Run(float lerpAmount)
+	#region RUN METHODS
+	private void Run(float lerpAmount)
 	{
 		//Calculate the direction we want to move in and our desired velocity
 		float targetSpeed = _moveInput.x * Data.runMaxSpeed;
@@ -397,11 +398,11 @@ public class PlayerMovement : MonoBehaviour
 
 		#region Conserve Momentum
 		//We won't slow the player down if they are moving in their desired direction but at a greater speed than their maxSpeed
-		if(Data.doConserveMomentum && Mathf.Abs(RB.velocity.x) > Mathf.Abs(targetSpeed) && Mathf.Sign(RB.velocity.x) == Mathf.Sign(targetSpeed) && Mathf.Abs(targetSpeed) > 0.01f && LastOnGroundTime < 0)
+		if (Data.doConserveMomentum && Mathf.Abs(RB.velocity.x) > Mathf.Abs(targetSpeed) && Mathf.Sign(RB.velocity.x) == Mathf.Sign(targetSpeed) && Mathf.Abs(targetSpeed) > 0.01f && LastOnGroundTime < 0)
 		{
 			//Prevent any deceleration from happening, or in other words conserve are current momentum
 			//You could experiment with allowing for the player to slightly increae their speed whilst in this "state"
-			accelRate = 0; 
+			accelRate = 0;
 		}
 		#endregion
 
@@ -415,25 +416,25 @@ public class PlayerMovement : MonoBehaviour
 		RB.AddForce(movement * Vector2.right, ForceMode2D.Force);
 
 		/*
-		 * For those interested here is what AddForce() will do
-		 * RB.velocity = new Vector2(RB.velocity.x + (Time.fixedDeltaTime  * speedDif * accelRate) / RB.mass, RB.velocity.y);
-		 * Time.fixedDeltaTime is by default in Unity 0.02 seconds equal to 50 FixedUpdate() calls per second
-		*/
+	 * For those interested here is what AddForce() will do
+	 * RB.velocity = new Vector2(RB.velocity.x + (Time.fixedDeltaTime  * speedDif * accelRate) / RB.mass, RB.velocity.y);
+	 * Time.fixedDeltaTime is by default in Unity 0.02 seconds equal to 50 FixedUpdate() calls per second
+	*/
 	}
 
 	private void Turn()
 	{
 		//stores scale and flips the player along the x axis, 
-		Vector3 scale = transform.localScale; 
+		Vector3 scale = transform.localScale;
 		scale.x *= -1;
 		transform.localScale = scale;
 
 		IsFacingRight = !IsFacingRight;
 	}
-    #endregion
+	#endregion
 
-    #region JUMP METHODS
-    private void Jump()
+	#region JUMP METHODS
+	private void Jump()
 	{
 		//Ensures we can't call Jump multiple times from one press
 		LastPressedJumpTime = 0;
@@ -534,46 +535,46 @@ public class PlayerMovement : MonoBehaviour
 	private void Slide()
 	{
 		//We remove the remaining upwards Impulse to prevent upwards sliding
-		if(RB.velocity.y > 0)
+		if (RB.velocity.y > 0)
 		{
-		    RB.AddForce(-RB.velocity.y * Vector2.up,ForceMode2D.Impulse);
+			RB.AddForce(-RB.velocity.y * Vector2.up, ForceMode2D.Impulse);
 		}
-	
+
 		//Works the same as the Run but only in the y-axis
 		//THis seems to work fine, buit maybe you'll find a better way to implement a slide into this system
-		float speedDif = Data.slideSpeed - RB.velocity.y;	
+		float speedDif = Data.slideSpeed - RB.velocity.y;
 		float movement = speedDif * Data.slideAccel;
 		//So, we clamp the movement here to prevent any over corrections (these aren't noticeable in the Run)
 		//The force applied can't be greater than the (negative) speedDifference * by how many times a second FixedUpdate() is called. For more info research how force are applied to rigidbodies.
-		movement = Mathf.Clamp(movement, -Mathf.Abs(speedDif)  * (1 / Time.fixedDeltaTime), Mathf.Abs(speedDif) * (1 / Time.fixedDeltaTime));
+		movement = Mathf.Clamp(movement, -Mathf.Abs(speedDif) * (1 / Time.fixedDeltaTime), Mathf.Abs(speedDif) * (1 / Time.fixedDeltaTime));
 
 		RB.AddForce(movement * Vector2.up);
 	}
-    #endregion
+	#endregion
 
 
-    #region CHECK METHODS
-    public void CheckDirectionToFace(bool isMovingRight)
+	#region CHECK METHODS
+	public void CheckDirectionToFace(bool isMovingRight)
 	{
 		if (isMovingRight != IsFacingRight)
 			Turn();
 	}
 
-    private bool CanJump()
-    {
+	private bool CanJump()
+	{
 		return LastOnGroundTime > 0 && !IsJumping;
-    }
+	}
 
 	private bool CanWallJump()
-    {
+	{
 		return LastPressedJumpTime > 0 && LastOnWallTime > 0 && LastOnGroundTime <= 0 && (!IsWallJumping ||
-			 (LastOnWallRightTime > 0 && _lastWallJumpDir == 1) || (LastOnWallLeftTime > 0 && _lastWallJumpDir == -1));
+			(LastOnWallRightTime > 0 && _lastWallJumpDir == 1) || (LastOnWallLeftTime > 0 && _lastWallJumpDir == -1));
 	}
 
 	private bool CanJumpCut()
-    {
+	{
 		return IsJumping && RB.velocity.y > 0;
-    }
+	}
 
 	private bool CanWallJumpCut()
 	{
@@ -591,81 +592,81 @@ public class PlayerMovement : MonoBehaviour
 	}
 
 	public bool CanSlide()
-    {
+	{
 		if (LastOnWallTime > 0 && !IsJumping && !IsWallJumping && !IsDashing && !IsWallClimbing && LastOnGroundTime <= 0)
 			return true;
 		else
 			return false;
 	}
-    #endregion
-    
-    private void HandleWallClimbing()
-    {
-	    if (CanStartWallClinging())
-	    {
-		    // Применить логику лазания по стене, включая движение вверх/вниз по стене и обработку прыжка от стены
-		    if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.J))
-		    {
-			    // Выполнить прыжок от стены
-			    WallJump(1); ///////////
-			    StopWallClinging();
-		    }
-		    else if (Input.GetKey(KeyCode.W))
-		    {
-			    StartWallClinging();
-			    // Движение вверх по стене
-			    RB.velocity = new Vector2(RB.velocity.x, Data.wallClimbSpeed);
-		    }
-	    }
-    }
+	#endregion
 
-    private bool CanStartWallClinging()
-    {
-	    if (IsDashing)  // Не давайте начать лазать по стене во время дэша
-	    {
-		    return false;
-	    }
+	private void HandleWallClimbing()
+	{
+		if (CanStartWallClinging())
+		{
+			// Применить логику лазания по стене, включая движение вверх/вниз по стене и обработку прыжка от стены
+			if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.J))
+			{
+				// Выполнить прыжок от стены
+				WallJump(1); ///////////
+				StopWallClinging();
+			}
+			else if (Input.GetKey(KeyCode.W))
+			{
+				StartWallClinging();
+				// Движение вверх по стене
+				RB.velocity = new Vector2(RB.velocity.x, Data.wallClimbSpeed);
+			}
+		}
+	}
 
-	    if (IsJumping && RB.velocity.y > 0)  // Если игрок уже в состоянии прыжка, отключите лазание по стене
-	    {
-		    return false;
-	    }
-	    
-	    if (LastOnWallRightTime > 0 || LastOnWallLeftTime > 0)
-	    {
-		    // Это условие проверяет, что игрок находится рядом со стеной и в данный момент не двигается вправо/влево
-		    return true;
-	    }
+	private bool CanStartWallClinging()
+	{
+		if (IsDashing)  // Не давайте начать лазать по стене во время дэша
+		{
+			return false;
+		}
 
-	    return false;
-    }
+		if (IsJumping && RB.velocity.y > 0)  // Если игрок уже в состоянии прыжка, отключите лазание по стене
+		{
+			return false;
+		}
 
-    private void StartWallClinging()
-    {
-	    // Начать лазить по стене
-	    IsWallClimbing = true;
-	    // Отключите гравитацию по умолчанию, чтобы игрок не падал вниз
-	    SetGravityScale(0);
-    }
+		if (LastOnWallRightTime > 0 || LastOnWallLeftTime > 0)
+		{
+			// Это условие проверяет, что игрок находится рядом со стеной и в данный момент не двигается вправо/влево
+			return true;
+		}
 
-    private void StopWallClinging()
-    {
-	    // Прекратить лазить по стене
-	    IsWallClimbing = false;
-	    // Вернуть обычное значение гравитации
-	    SetGravityScale(Data.gravityScale);
-    }
-    
-    #region EDITOR METHODS
-    private void OnDrawGizmosSelected()
-    {
+		return false;
+	}
+
+	private void StartWallClinging()
+	{
+		// Начать лазить по стене
+		IsWallClimbing = true;
+		// Отключите гравитацию по умолчанию, чтобы игрок не падал вниз
+		SetGravityScale(0);
+	}
+
+	private void StopWallClinging()
+	{
+		// Прекратить лазить по стене
+		IsWallClimbing = false;
+		// Вернуть обычное значение гравитации
+		SetGravityScale(Data.gravityScale);
+	}
+
+	#region EDITOR METHODS
+	private void OnDrawGizmosSelected()
+	{
 		Gizmos.color = Color.green;
 		Gizmos.DrawWireCube(_groundCheckPoint.position, _groundCheckSize);
 		Gizmos.color = Color.blue;
 		Gizmos.DrawWireCube(_frontWallCheckPoint.position, _wallCheckSize);
 		Gizmos.DrawWireCube(_backWallCheckPoint.position, _wallCheckSize);
 	}
-    #endregion
+	#endregion
 }
 
 // created by Dawnosaur :D
