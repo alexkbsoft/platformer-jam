@@ -6,8 +6,6 @@ public class PlayerAnimator : MonoBehaviour
     private Animator anim;
     private SpriteRenderer spriteRend;
 
-    private DemoManager demoManager;
-
     [Header("Movement Tilt")]
     [SerializeField] private float maxTilt;
     [SerializeField] [Range(0, 1)] private float tiltSpeed;
@@ -32,8 +30,6 @@ public class PlayerAnimator : MonoBehaviour
         mov = GetComponent<PlayerMovement>();
         spriteRend = GetComponentInChildren<SpriteRenderer>();
         anim = spriteRend.GetComponent<Animator>();
-
-        demoManager = FindObjectOfType<DemoManager>();
 
         _jumpParticle = jumpFX.GetComponent<ParticleSystem>();
         _landParticle = landFX.GetComponent<ParticleSystem>();
