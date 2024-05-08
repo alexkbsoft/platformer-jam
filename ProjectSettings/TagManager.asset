@@ -38,8 +38,14 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: FarBg
+    uniqueID: 1559492703
+    locked: 0
   - name: Background
     uniqueID: 2454963595
+    locked: 0
+  - name: Ground
+    uniqueID: 2326674251
     locked: 0
   - name: Player
     uniqueID: 3339897963
