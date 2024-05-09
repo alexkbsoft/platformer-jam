@@ -14,7 +14,7 @@ namespace Shoot
             _rbody = GetComponent<Rigidbody2D>();
         }
 
-        public void Launch(Vector2 direction, float force) => _rbody.AddForce(direction * force, ForceMode2D.Impulse);
+        public void Launch(Vector2 direction, float force) => _rbody.AddForce(direction * force * _rbody.mass, ForceMode2D.Impulse);
         
         protected override void DoDamage()
         {
