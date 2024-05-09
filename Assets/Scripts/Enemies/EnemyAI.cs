@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using Enemies.StateMachines;
+using Enemies.StateMachines.States;
 using Health;
 using UnityEngine;
 
@@ -6,41 +9,50 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class EnemyAI : MonoBehaviour
 {
-    [Header("Enemy parameters")] 
-    [SerializeField] private float damage;
+    [Header("Enemy parameters")] [SerializeField]
+    private float damage;
+
     [SerializeField] private float attackDelay;
     [SerializeField] private float walkSpeed;
     [SerializeField] private float runSpeed;
 
-    [Space] [Header("Radius to Target")] 
-    [SerializeField] private float viewingRadius = 3;
+    [Space] [Header("Radius to Target")] [SerializeField]
+    private float viewingRadius = 3;
+
     [SerializeField] private float runDistance = 2.5f;
     [SerializeField] private float walkDistance = 1.5f;
     [SerializeField] private float stayDistance = 0.5f;
 
-    [Space] [Header("Target LayerMask")] 
-    [SerializeField] private LayerMask layerMask;
+    [Space] [Header("Target LayerMask")] [SerializeField]
+    private LayerMask layerMask;
 
+    private PersonStateMachine _stateMachine;
     private Collider2D _target;
     private Rigidbody2D _rbody;
     private Animator _animator;
     private bool _isDelayedAttack;
 
-    public void Awake()
+    private void Awake()
     {
         _rbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
+        _stateMachine = new PersonStateMachine(new IdleState(transform, _rbody, _animator));
     }
 
-    public void Update()
+    private void FixedUpdate()
     {
+        _stateMachine.FixedExecute();
+    }
+
+    private void Update()
+    {
+        _stateMachine.Execute();
+
         if (!HasTarget())
         {
             Idle();
             return;
         }
-
-        LookToTarget();
 
         if (TargetIsNear())
         {
@@ -51,13 +63,13 @@ public class EnemyAI : MonoBehaviour
 
         if (CanWalkFollow())
         {
-            WalkFollow(CanWalkFollow());
+            Walk();
             return;
         }
 
         if (CanRunFollow())
         {
-            RunFollow(CanRunFollow());
+            Run();
         }
     }
 
@@ -66,57 +78,21 @@ public class EnemyAI : MonoBehaviour
         return true;
     }
 
-    private void LookToTarget()
-    {
-    }
-
     private bool HasTarget()
     {
         _target = Physics2D.OverlapCircle(transform.position, viewingRadius, layerMask);
         return _target;
     }
 
+    private void Idle() => _stateMachine = new PersonStateMachine(new IdleState(transform, _rbody, _animator));
+    private void Walk() => _stateMachine.ChangeState(new WalkState(transform, _target.transform, walkSpeed, walkDistance, _rbody, _animator));
+    private void Run() => _stateMachine.ChangeState(new RunState(transform, _target.transform, runDistance, runDistance, _rbody, _animator));
+    private void Attack() => _stateMachine.ChangeState(new AttackState(transform, _target.transform, walkSpeed, stayDistance, _rbody, _animator));
     private bool CanWalkFollow() => GetTargetDistance() <= walkDistance;
     private bool CanRunFollow() => GetTargetDistance() <= runDistance;
 
-    private void RunFollow(bool canRun)
-    {
-        _animator.SetBool("isRun", canRun);
-        WalkTo(GetVectorToTarget(), runSpeed);
-    }
-
-    private void WalkFollow(bool canWalk)
-    {
-        _animator.SetBool("isWalk", canWalk);
-        WalkTo(GetVectorToTarget(), walkSpeed);
-    }
-
-    private void Idle()
-    {
-    }
-
-    private void Attack()
-    {
-        if (_isDelayedAttack || !_target.TryGetComponent(out HealthProcessor health)) return;
-
-        _animator.SetBool("isAttack", true);
-        health.TakeDamage(damage);
-        StartCoroutine(AttackDelay());
-    }
-
-    private IEnumerator AttackDelay()
-    {
-        _isDelayedAttack = true;
-        yield return new WaitForSeconds(attackDelay);
-        _isDelayedAttack = false;
-    }
-
-    private void WalkTo(Vector2 direction, float speed) =>
-        _rbody.velocity = new Vector2(direction.x, 0) * speed * Time.deltaTime;
-    
     private bool TargetIsNear() => GetTargetDistance() <= stayDistance;
     private float GetTargetDistance() => Vector2.Distance(transform.position, _target.transform.position);
-    private Vector2 GetVectorToTarget() => _target.transform.position - transform.position;
 
 
 #if UNITY_EDITOR
