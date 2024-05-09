@@ -1,14 +1,21 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using Health;
+using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class EnemyAI : MonoBehaviour
 {
-    [SerializeField] private float walkSpeed, runSpeed;
-    [SerializeField] private float viewingRadius = 3, runDistance = 2.5f, walkDistance = 1.5f, stayDistance = 0.5f;
+    [Header("Enemy parameters")] [SerializeField]
+    private float damage, _attackDelay, walkSpeed, runSpeed;
+
+    [Header("Radius to Target")] [SerializeField]
+    private float viewingRadius = 3, runDistance = 2.5f, walkDistance = 1.5f, stayDistance = 0.5f;
+
     [SerializeField] private LayerMask layerMask;
 
     private Collider2D _target;
     private Rigidbody2D _rbody;
+    private bool _isDelayedAttack;
 
     public void Awake()
     {
@@ -44,21 +51,6 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, viewingRadius);
-
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, walkDistance);
-
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(transform.position, runDistance);
-
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, stayDistance);
-    }
-
     private bool CanAttack()
     {
         return true;
@@ -74,7 +66,6 @@ public class EnemyAI : MonoBehaviour
         return _target;
     }
 
-    private bool CanStay() => GetTargetDistance() <= stayDistance;
     private bool CanWalkFollow() => GetTargetDistance() <= walkDistance;
     private bool CanRunFollow() => GetTargetDistance() <= runDistance;
 
@@ -95,7 +86,17 @@ public class EnemyAI : MonoBehaviour
 
     private void Attack()
     {
-        Debug.Log("attacked!");
+        if (_isDelayedAttack || !_target.TryGetComponent(out HealthProcessor health)) return;
+
+        health.TakeDamage(damage);
+        StartCoroutine(AttackDelay());
+    }
+
+    private IEnumerator AttackDelay()
+    {
+        _isDelayedAttack = true;
+        yield return new WaitForSeconds(_attackDelay);
+        _isDelayedAttack = false;
     }
 
     private void WalkTo(Vector2 direction, float speed) =>
@@ -104,4 +105,22 @@ public class EnemyAI : MonoBehaviour
     private bool TargetIsNear() => GetTargetDistance() <= stayDistance;
     private float GetTargetDistance() => Vector2.Distance(transform.position, _target.transform.position);
     private Vector2 GetVectorToTarget() => _target.transform.position - transform.position;
+    
+    
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, viewingRadius);
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, walkDistance);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, runDistance);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, stayDistance);
+    }
+#endif
 }
