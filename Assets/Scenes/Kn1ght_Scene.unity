@@ -3845,11 +3845,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4043320865438001518, guid: 87ae45dcf5e7e9a44bdd65247e249e1b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 11.280777
+      value: 2.28
       objectReference: {fileID: 0}
     - target: {fileID: 4043320865438001518, guid: 87ae45dcf5e7e9a44bdd65247e249e1b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.577167
+      value: -2.3
       objectReference: {fileID: 0}
     - target: {fileID: 4043320865438001518, guid: 87ae45dcf5e7e9a44bdd65247e249e1b, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3886,6 +3886,10 @@ PrefabInstance:
     - target: {fileID: 7618243790667921298, guid: 87ae45dcf5e7e9a44bdd65247e249e1b, type: 3}
       propertyPath: m_Name
       value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121798303599641958, guid: 87ae45dcf5e7e9a44bdd65247e249e1b, type: 3}
+      propertyPath: m_Constraints
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

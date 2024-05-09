@@ -3,6 +3,7 @@ using Health;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Animator))]
 public class EnemyAI : MonoBehaviour
 {
     [Header("Enemy parameters")] 
@@ -22,9 +23,14 @@ public class EnemyAI : MonoBehaviour
 
     private Collider2D _target;
     private Rigidbody2D _rbody;
+    private Animator _animator;
     private bool _isDelayedAttack;
 
-    public void Awake() => _rbody = GetComponent<Rigidbody2D>();
+    public void Awake()
+    {
+        _rbody = GetComponent<Rigidbody2D>();
+        _animator = GetComponent<Animator>();
+    }
 
     public void Update()
     {
@@ -45,13 +51,13 @@ public class EnemyAI : MonoBehaviour
 
         if (CanWalkFollow())
         {
-            WalkFollow();
+            WalkFollow(CanWalkFollow());
             return;
         }
 
         if (CanRunFollow())
         {
-            RunFollow();
+            RunFollow(CanRunFollow());
         }
     }
 
@@ -73,25 +79,27 @@ public class EnemyAI : MonoBehaviour
     private bool CanWalkFollow() => GetTargetDistance() <= walkDistance;
     private bool CanRunFollow() => GetTargetDistance() <= runDistance;
 
-    private void RunFollow()
+    private void RunFollow(bool canRun)
     {
+        _animator.SetBool("isRun", canRun);
         WalkTo(GetVectorToTarget(), runSpeed);
     }
 
-    private void WalkFollow()
+    private void WalkFollow(bool canWalk)
     {
+        _animator.SetBool("isWalk", canWalk);
         WalkTo(GetVectorToTarget(), walkSpeed);
     }
 
     private void Idle()
     {
-        Debug.Log("idle");
     }
 
     private void Attack()
     {
         if (_isDelayedAttack || !_target.TryGetComponent(out HealthProcessor health)) return;
 
+        _animator.SetBool("isAttack", true);
         health.TakeDamage(damage);
         StartCoroutine(AttackDelay());
     }
@@ -105,7 +113,7 @@ public class EnemyAI : MonoBehaviour
 
     private void WalkTo(Vector2 direction, float speed) =>
         _rbody.velocity = new Vector2(direction.x, 0) * speed * Time.deltaTime;
-
+    
     private bool TargetIsNear() => GetTargetDistance() <= stayDistance;
     private float GetTargetDistance() => Vector2.Distance(transform.position, _target.transform.position);
     private Vector2 GetVectorToTarget() => _target.transform.position - transform.position;
