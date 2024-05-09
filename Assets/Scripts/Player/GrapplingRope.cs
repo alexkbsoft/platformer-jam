@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Player
+﻿namespace Player
 {
     using UnityEngine;
 
