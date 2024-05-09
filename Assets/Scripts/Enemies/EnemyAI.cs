@@ -5,22 +5,26 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class EnemyAI : MonoBehaviour
 {
-    [Header("Enemy parameters")] [SerializeField]
-    private float damage, _attackDelay, walkSpeed, runSpeed;
+    [Header("Enemy parameters")] 
+    [SerializeField] private float damage;
+    [SerializeField] private float attackDelay;
+    [SerializeField] private float walkSpeed;
+    [SerializeField] private float runSpeed;
 
-    [Header("Radius to Target")] [SerializeField]
-    private float viewingRadius = 3, runDistance = 2.5f, walkDistance = 1.5f, stayDistance = 0.5f;
+    [Space] [Header("Radius to Target")] 
+    [SerializeField] private float viewingRadius = 3;
+    [SerializeField] private float runDistance = 2.5f;
+    [SerializeField] private float walkDistance = 1.5f;
+    [SerializeField] private float stayDistance = 0.5f;
 
+    [Space] [Header("Target LayerMask")] 
     [SerializeField] private LayerMask layerMask;
 
     private Collider2D _target;
     private Rigidbody2D _rbody;
     private bool _isDelayedAttack;
 
-    public void Awake()
-    {
-        _rbody = GetComponent<Rigidbody2D>();
-    }
+    public void Awake() => _rbody = GetComponent<Rigidbody2D>();
 
     public void Update()
     {
@@ -95,7 +99,7 @@ public class EnemyAI : MonoBehaviour
     private IEnumerator AttackDelay()
     {
         _isDelayedAttack = true;
-        yield return new WaitForSeconds(_attackDelay);
+        yield return new WaitForSeconds(attackDelay);
         _isDelayedAttack = false;
     }
 
@@ -105,8 +109,8 @@ public class EnemyAI : MonoBehaviour
     private bool TargetIsNear() => GetTargetDistance() <= stayDistance;
     private float GetTargetDistance() => Vector2.Distance(transform.position, _target.transform.position);
     private Vector2 GetVectorToTarget() => _target.transform.position - transform.position;
-    
-    
+
+
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
