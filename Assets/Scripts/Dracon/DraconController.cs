@@ -46,14 +46,6 @@ public class DraconController : MonoBehaviour,Idamagebl
         Debug.Log(_startlocalScale);
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            Damage(5);
-        }
-    }
-
     private void FixedUpdate()
     {
         if (_isDead) return;
