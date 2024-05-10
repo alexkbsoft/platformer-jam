@@ -17,12 +17,12 @@ namespace Shoot
             SetTargetPosition();
             RotateGun();
 
-            if (Input.GetMouseButtonUp(0)) Shoot();
+            if (Input.GetMouseButtonUp(1)) Shoot();
         }
 
         private void Shoot()
         {
-            if (!bulletPool.HasBullets() || _isCooldown) return;
+            if (!bulletPool.HasBullets() || _isCooldown || Damage <= 0) return;
 
             var bullet = bulletPool.GetBullet().GetComponent<Bullet>();
             bullet.transform.position = transform.position;
