@@ -425,13 +425,19 @@ namespace Player
 
 		private void Turn()
 		{
-			//stores scale and flips the player along the x axis, 
-			Vector3 scale = transform.localScale;
-			scale.x *= -1;
-			transform.localScale = scale;
-
+			transform.localRotation = new Quaternion(0, _moveInput.x < 0 ? -1 : 0, 0, 0);
 			IsFacingRight = !IsFacingRight;
 		}
+		
+		// private void Turn()
+		// {
+		// 	//stores scale and flips the player along the x axis, 
+		// 	Vector3 scale = transform.localScale;
+		// 	scale.x *= -1;
+		// 	transform.localScale = scale;
+		//
+		// 	IsFacingRight = !IsFacingRight;
+		// }
 		#endregion
 
 		#region JUMP METHODS
