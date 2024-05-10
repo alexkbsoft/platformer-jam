@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Health;
+using UnityEngine;
 
 namespace Shoot
 {
@@ -16,9 +17,9 @@ namespace Shoot
 
         public void Launch(Vector2 direction, float force) => _rbody.AddForce(direction * force * _rbody.mass, ForceMode2D.Impulse);
         
-        protected override void DoDamage()
+        protected override void DoDamage(GameObject go)
         {
-            base.DoDamage();
+            base.DoDamage(go);
             _pool.AddBullet(gameObject);
         }
     }
