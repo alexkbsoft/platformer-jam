@@ -4,6 +4,7 @@ using Enemies.StateMachines;
 using Enemies.StateMachines.States;
 using Health;
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
@@ -48,6 +49,12 @@ public class EnemyAI : MonoBehaviour
     {
         _stateMachine.Execute();
 
+        if (IsFall())
+        {
+            Fall();
+            return;
+        }
+        
         if (!HasTarget())
         {
             Idle();
@@ -79,11 +86,6 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    private bool CanAttack()
-    {
-        return true;
-    }
-
     private bool HasTarget()
     {
         _target = Physics2D.OverlapCircle(transform.position, viewingRadius, layerMask);
@@ -93,12 +95,14 @@ public class EnemyAI : MonoBehaviour
     private void Idle() => _stateMachine.ChangeState(new IdleState(transform, _rbody, _animator));
     private void Walk() => _stateMachine.ChangeState(new WalkState(transform, _target.transform, walkSpeed, walkDistance, _rbody, _animator));
     private void Run() => _stateMachine.ChangeState(new RunState(transform, _target.transform, runSpeed, runDistance, _rbody, _animator));
+    private void Fall() => _stateMachine.ChangeState(new FallState(transform, _rbody, _animator));
     private bool CanWalkFollow() => GetTargetDistance() <= walkDistance;
     private bool CanRunFollow() => GetTargetDistance() <= runDistance;
     private bool TargetIsFar() => GetTargetDistance() > viewingRadius;
     private bool TargetIsNear() => GetTargetDistance() <= stayDistance;
     private float GetTargetDistance() => Vector2.Distance(transform.position, _target.transform.position);
-
+    private bool IsFall() => _rbody.velocity.y < -0.2f;
+    private bool CanAttack() => true;
     private void Attack()
     {
         if (_isDelayedAttack || _target.GetComponent<HealthProcessor>() == null) return;

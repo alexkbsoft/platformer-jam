@@ -21,8 +21,8 @@ namespace Enemies.StateMachines.States
         }
 
         private void WalkTo(Vector2 direction, float speed) =>
-            _rbody.velocity = new Vector2(direction.x, _rbody.velocity.y) * speed * Time.deltaTime;
+            _rbody.velocity = new Vector2(direction.x * speed * Time.deltaTime, _rbody.velocity.y);
 
-        private Vector2 GetDirection(Vector2 target) => target - (Vector2)_player.transform.position;
+        private Vector2 GetDirection(Vector3 target) => target - _player.transform.position;
     }
 }
