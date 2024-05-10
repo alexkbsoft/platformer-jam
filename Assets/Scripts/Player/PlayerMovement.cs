@@ -16,7 +16,7 @@ namespace Player
 		//Scriptable object which holds all the player's movement parameters. If you don't want to use it
 		//just paste in all the parameters, though you will need to manuly change all references in this script
 		public PlayerData Data;
-
+		[SerializeField] private AudioSource stepsAudio;
 		public Vector3 GroundChechPos => _groundCheckPoint.transform.position;
 
 		#region COMPONENTS
@@ -113,6 +113,15 @@ namespace Player
 			_moveInput.x = Input.GetAxisRaw("Horizontal");
 			_moveInput.y = Input.GetAxisRaw("Vertical");
 
+			if (!IsJumping && !IsSliding && !IsWallClimbing && !IsWallJumping && Mathf.Abs(_moveInput.x) > 0)
+			{
+				stepsAudio.mute = false;
+			}
+			else
+			{
+				stepsAudio.mute = true;
+			}
+			
 			if (_moveInput.x != 0)
 				CheckDirectionToFace(_moveInput.x > 0);
 
