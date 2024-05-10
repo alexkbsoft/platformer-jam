@@ -4,20 +4,18 @@ namespace Health
 {
     public class HealthProcessor : MonoBehaviour
     {
-        public delegate void HealthEvent();
-        public HealthEvent Die;
-
         [field: SerializeField] private ValueBar Bar { get; set; }
         [field: SerializeField] private float MaxValue { get; set; }
         [SerializeField] private float currentValue;
+        [SerializeField] private Transform _spawnPoint;
 
         private float CurrentValue
         {
             get => currentValue;
             set
             {
-                if (value <= MaxValue && value >= MinValue) currentValue = value;
-                if (value == 0) Die?.Invoke();
+                currentValue = Mathf.Clamp(value, MinValue, MaxValue);
+                if (value < 0) Death();
             }
         }
         
@@ -38,5 +36,17 @@ namespace Health
         }
 
         private float GetPercentageRation() => CurrentValue / MaxValue * 100;
+
+        private void Death()
+        {
+            if (_spawnPoint) Respawn();
+            else gameObject.SetActive(false);
+        }
+
+        private void Respawn()
+        {
+            transform.position = _spawnPoint.position;
+            TakeHeal(MaxValue);
+        }
     }
 }
