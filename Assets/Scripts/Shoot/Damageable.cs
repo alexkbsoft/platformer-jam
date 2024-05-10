@@ -4,13 +4,11 @@ namespace Shoot
 {
     public class Damageable : MonoBehaviour
     {
-        [SerializeField] private float damage;
-        
-        private void OnCollisionEnter2D(Collision2D other) => DoDamage();
+        [field: SerializeField] public float Damage { get; set; }
 
         protected virtual void DoDamage()
         {
-            Debug.Log($"Нанесено {damage} урона");
+            Debug.Log($"Нанесено {Damage} урона");
         }
     }
 }

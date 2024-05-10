@@ -5,10 +5,12 @@ namespace Shoot
 {
     public class Gun : MonoBehaviour
     {
-        [SerializeField] private Transform player;
         [SerializeField] private BulletPool bulletPool;
         [SerializeField] private float shootForce;
+        [SerializeField] private GameObject weaponAnimator;
 
+        [field: SerializeField] public float Damage { get; set; }
+        
         private void Update()
         {
             if (Input.GetMouseButtonUp(0)) Shoot();
@@ -17,12 +19,22 @@ namespace Shoot
         private void Shoot()
         {
             if (!bulletPool.HasBullets()) return;
-
-            var bullet = bulletPool.GetBullet();
+            
+            var bullet = bulletPool.GetBullet().GetComponent<Bullet>();
             bullet.transform.position = transform.position;
-            bullet.GetComponent<Bullet>().Launch(GetDirection(), shootForce);
+            bullet.Damage = this.Damage;  
+            
+            AnimateSword();
+            
+            bullet.Launch(GetDirection(), shootForce);
         }
-
+        
+        private void AnimateSword()
+        {
+            weaponAnimator.SetActive(false);
+            weaponAnimator.SetActive(true);
+        }
+        
         private Vector2 GetDirection()
         {
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
