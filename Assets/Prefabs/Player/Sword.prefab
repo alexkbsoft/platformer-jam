@@ -153,6 +153,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponAnimator: {fileID: 2966282474094860651}
   attackRadius: 6
+  attackCooldown: 0.3
   layer:
     serializedVersion: 2
     m_Bits: 191
