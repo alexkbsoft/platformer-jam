@@ -54,6 +54,12 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
+        if (TargetIsFar())
+        {
+            _target = null;
+            return;
+        }
+        
         if (TargetIsNear())
         {
             if (CanAttack()) Attack();
@@ -84,17 +90,30 @@ public class EnemyAI : MonoBehaviour
         return _target;
     }
 
-    private void Idle() => _stateMachine = new PersonStateMachine(new IdleState(transform, _rbody, _animator));
+    private void Idle() => _stateMachine.ChangeState(new IdleState(transform, _rbody, _animator));
     private void Walk() => _stateMachine.ChangeState(new WalkState(transform, _target.transform, walkSpeed, walkDistance, _rbody, _animator));
-    private void Run() => _stateMachine.ChangeState(new RunState(transform, _target.transform, runDistance, runDistance, _rbody, _animator));
-    private void Attack() => _stateMachine.ChangeState(new AttackState(transform, _target.transform, walkSpeed, stayDistance, _rbody, _animator));
+    private void Run() => _stateMachine.ChangeState(new RunState(transform, _target.transform, runSpeed, runDistance, _rbody, _animator));
     private bool CanWalkFollow() => GetTargetDistance() <= walkDistance;
     private bool CanRunFollow() => GetTargetDistance() <= runDistance;
-
+    private bool TargetIsFar() => GetTargetDistance() > viewingRadius;
     private bool TargetIsNear() => GetTargetDistance() <= stayDistance;
     private float GetTargetDistance() => Vector2.Distance(transform.position, _target.transform.position);
 
+    private void Attack()
+    {
+        if (_isDelayedAttack || _target.GetComponent<HealthProcessor>() == null) return;
 
+        _stateMachine.ChangeState(new AttackState(transform, _target.transform, damage, walkSpeed, stayDistance, _rbody, _animator));
+        StartCoroutine(AttackDelay());
+    }
+
+    private IEnumerator AttackDelay()
+    {
+        _isDelayedAttack = true;
+        yield return new WaitForSeconds(attackDelay);
+        _isDelayedAttack = false;
+    }
+    
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {

@@ -13,7 +13,7 @@ namespace Enemies.StateMachines
 
         public void ChangeState(CharacterState newState)
         {
-            if (CurrentState == newState || !newState.CanEnter() || !CurrentState.IsCompleted) return;
+            if (!newState.CanEnter() || !CurrentState.IsCompleted) return;
 
             CurrentState?.Exit();
             CurrentState = newState;
@@ -22,8 +22,6 @@ namespace Enemies.StateMachines
 
         public void ForcedChangeState(CharacterState newState)
         {
-            if (CurrentState == newState) return;
-
             CurrentState?.Exit();
             CurrentState = newState;
             CurrentState.Enter();

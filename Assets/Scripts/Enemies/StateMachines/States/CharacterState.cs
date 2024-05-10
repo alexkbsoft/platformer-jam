@@ -34,13 +34,12 @@ namespace Enemies.StateMachines.States
         protected bool AnimationCompleted()
         {
             var animInfo = _animator.GetCurrentAnimatorStateInfo(0);
-            return animInfo.normalizedTime >= animInfo.length + 0.45f;
+            return animInfo.normalizedTime >= animInfo.length;
         }
-
         protected float GetPercentCurrentMomentAnim()
         {
             var animInfo = _animator.GetCurrentAnimatorStateInfo(0);
-            return (animInfo.normalizedTime / animInfo.length + 0.45f) * 100;
+            return (animInfo.normalizedTime / animInfo.length) * 100;
         }
     }
 }
