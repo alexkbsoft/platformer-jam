@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Health;
+using UnityEngine;
 
 namespace Shoot
 {
@@ -6,9 +7,14 @@ namespace Shoot
     {
         [field: SerializeField] public float Damage { get; set; }
 
-        protected virtual void DoDamage()
+        private void OnCollisionEnter2D(Collision2D other)
         {
-            Debug.Log($"Нанесено {Damage} урона");
+            DoDamage(other.gameObject);
+        }
+
+        protected virtual void DoDamage(GameObject go)
+        {
+            if (go.gameObject.TryGetComponent(out HealthProcessor health)) health.TakeDamage(Damage);
         }
     }
 }
