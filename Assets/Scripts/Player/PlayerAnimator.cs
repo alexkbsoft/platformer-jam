@@ -6,7 +6,7 @@ namespace Player
     public class PlayerAnimator : MonoBehaviour
     {
         private PlayerMovement mov;
-        private Animator anim;
+        public Animator anim; //
         private SpriteRenderer spriteRend;
 
         private DemoManager demoManager;
