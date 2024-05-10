@@ -5,17 +5,11 @@ using UnityEngine;
 
 namespace Melee
 {
-    public class Sword : MonoBehaviour
+    public class Sword : Weapon
     {
-        [SerializeField] private GameObject weaponAnimator;
         [SerializeField] private float attackRadius;
-        [SerializeField] private float attackCooldown = 0.3f;
         [SerializeField] private LayerMask layer;
 
-        private bool _isCooldown;
-        
-        [field: SerializeField] public float Damage { get; set; }
-        
         private void Update()
         {
             if (Input.GetMouseButtonUp(1)) Attack();
@@ -36,19 +30,6 @@ namespace Melee
             StartCoroutine(Cooldown());
         }
 
-        private void AnimateSword()
-        {
-            weaponAnimator.SetActive(false);
-            weaponAnimator.SetActive(true);
-        }
-
-        private IEnumerator Cooldown()
-        {
-            _isCooldown = true;
-            yield return new WaitForSeconds(attackCooldown);
-            _isCooldown = false;
-        }
-        
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {

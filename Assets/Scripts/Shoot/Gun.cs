@@ -1,16 +1,14 @@
 using System;
+using Melee;
 using UnityEngine;
 
 namespace Shoot
 {
-    public class Gun : MonoBehaviour
+    public class Gun : Weapon
     {
         [SerializeField] private BulletPool bulletPool;
         [SerializeField] private float shootForce;
-        [SerializeField] private GameObject weaponAnimator;
 
-        [field: SerializeField] public float Damage { get; set; }
-        
         private void Update()
         {
             if (Input.GetMouseButtonUp(0)) Shoot();
@@ -18,7 +16,7 @@ namespace Shoot
 
         private void Shoot()
         {
-            if (!bulletPool.HasBullets()) return;
+            if (!bulletPool.HasBullets() || _isCooldown) return;
             
             var bullet = bulletPool.GetBullet().GetComponent<Bullet>();
             bullet.transform.position = transform.position;
@@ -27,12 +25,8 @@ namespace Shoot
             AnimateSword();
             
             bullet.Launch(GetDirection(), shootForce);
-        }
-        
-        private void AnimateSword()
-        {
-            weaponAnimator.SetActive(false);
-            weaponAnimator.SetActive(true);
+
+            StartCoroutine(Cooldown());
         }
         
         private Vector2 GetDirection()
