@@ -114,14 +114,9 @@ namespace Player
 			_moveInput.y = Input.GetAxisRaw("Vertical");
 
 			if (!IsJumping && !IsSliding && !IsWallClimbing && !IsWallJumping && Mathf.Abs(_moveInput.x) > 0)
-			{
 				stepsAudio.mute = false;
-			}
-			else
-			{
-				stepsAudio.mute = true;
-			}
-			
+			else stepsAudio.mute = true;
+
 			if (_moveInput.x != 0)
 				CheckDirectionToFace(_moveInput.x > 0);
 

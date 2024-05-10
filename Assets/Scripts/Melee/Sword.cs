@@ -20,6 +20,7 @@ namespace Melee
             if (_isCooldown) return;
 
             AnimateSword();
+            PlaySoundWeapon();
             
             var colliders = Physics2D.OverlapCircleAll(transform.position, attackRadius, layer);
 

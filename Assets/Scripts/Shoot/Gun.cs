@@ -23,6 +23,7 @@ namespace Shoot
             bullet.Damage = this.Damage;  
             
             AnimateSword();
+            PlaySoundWeapon();
             
             bullet.Launch(GetDirection(), shootForce);
 
