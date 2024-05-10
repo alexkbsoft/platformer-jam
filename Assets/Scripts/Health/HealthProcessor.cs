@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 namespace Health
 {
@@ -7,7 +8,11 @@ namespace Health
         [field: SerializeField] private ValueBar Bar { get; set; }
         [field: SerializeField] private float MaxValue { get; set; }
         [SerializeField] private float currentValue;
+        [SerializeField] private float DamageRollbackDelaly = 1.5f;
         [SerializeField] private Transform _spawnPoint;
+        [SerializeField] private SpriteRenderer _renderer;
+
+        private bool _canDamage = true;
 
         private float CurrentValue
         {
@@ -22,7 +27,14 @@ namespace Health
         private float MinValue { get; } = 0;
 
         public void TakeHeal(float value) => AddValue(value);
-        public void TakeDamage(float value) => AddValue(-value);
+
+        public void TakeDamage(float value)
+        {
+            if (!_canDamage) return;
+            
+            AddValue(-value);
+            StartCoroutine(DamageRollback());
+        }
 
         private void AddValue(float value)
         {
@@ -47,6 +59,15 @@ namespace Health
         {
             transform.position = _spawnPoint.position;
             TakeHeal(MaxValue);
+        }
+
+        private IEnumerator DamageRollback()
+        {
+            _canDamage = false;
+            _renderer.color = Color.red;
+            yield return new WaitForSeconds(DamageRollbackDelaly);
+            _canDamage = true;
+            _renderer.color = Color.white;
         }
     }
 }

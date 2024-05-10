@@ -1982,6 +1982,11 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!212 &957309931 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 4046940760375710881, guid: f80b5022d7b211245bad162787328dcd, type: 3}
+  m_PrefabInstance: {fileID: 1250331197}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &998005216
 GameObject:
   m_ObjectHideFlags: 0
@@ -2231,6 +2236,18 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 43cb1aa7f67c6b84aa5d8725aef19e00, type: 3}
     - target: {fileID: 4046940760375710881, guid: f80b5022d7b211245bad162787328dcd, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4046940760375710881, guid: f80b5022d7b211245bad162787328dcd, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4046940760375710881, guid: f80b5022d7b211245bad162787328dcd, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4046940760375710881, guid: f80b5022d7b211245bad162787328dcd, type: 3}
       propertyPath: m_SortingLayer
       value: -1
       objectReference: {fileID: 0}
@@ -2355,7 +2372,9 @@ MonoBehaviour:
   <Bar>k__BackingField: {fileID: 1948528225}
   <MaxValue>k__BackingField: 100
   currentValue: 100
+  DamageRollbackDelaly: 1.5
   _spawnPoint: {fileID: 1124742219}
+  _renderer: {fileID: 957309931}
 --- !u!1 &1316103568
 GameObject:
   m_ObjectHideFlags: 0
@@ -3444,7 +3463,9 @@ MonoBehaviour:
   <Bar>k__BackingField: {fileID: 842250910}
   <MaxValue>k__BackingField: 50
   currentValue: 50
+  DamageRollbackDelaly: 1.5
   _spawnPoint: {fileID: 0}
+  _renderer: {fileID: 0}
 --- !u!1 &1796788917
 GameObject:
   m_ObjectHideFlags: 0
