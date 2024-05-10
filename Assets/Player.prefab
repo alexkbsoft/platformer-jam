@@ -16,7 +16,6 @@ GameObject:
   - component: {fileID: 341759985226396766}
   - component: {fileID: 8825490192298450883}
   - component: {fileID: 2249940140605038893}
-  - component: {fileID: 1382090332499737998}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -127,6 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b25879a85aef4049811869e47d814b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  health: {fileID: 8825490192298450883}
   Data: {fileID: 11400000, guid: f4f40d643214f51468b2f79845a6d929, type: 2}
   <IsWallClimbing>k__BackingField: 0
   <IsWallJumping>k__BackingField: 1
@@ -152,6 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d024cc73ad207e438a7a1d777842e0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  anim: {fileID: 0}
   maxTilt: 10
   tiltSpeed: 0.08
   jumpFX: {fileID: 3234584074981126610, guid: 3a0a98ced6cd3b74b9835a123a450db7, type: 3}
@@ -187,11 +188,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Bar>k__BackingField: {fileID: 0}
-  <MaxValue>k__BackingField: 100
-  currentValue: 100
-  DamageRollbackDelaly: 1.5
-  _spawnPoint: {fileID: 0}
-  _renderer: {fileID: 4046940760375710881}
+  <MaxValue>k__BackingField: 10
+  currentValue: 10
+  damageCooldown: 1
+  deathDelay: 5
+  spawnPoint: {fileID: 0}
+  renderer: {fileID: 4046940760375710881}
+  animator: {fileID: 3488225745535040768}
 --- !u!114 &2249940140605038893
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -218,27 +221,10 @@ MonoBehaviour:
   - {x: 0.5761478, y: -1.4259394, z: 0}
   m_ShapePathHash: 0
   m_Mesh: {fileID: 0}
-  m_InstanceId: 77424
+  m_InstanceId: -481754
   m_LocalBounds:
     m_Center: {x: -0.006307602, y: -0.25539935, z: 0}
     m_Extent: {x: 0.5824554, y: 1.1705401, z: 0}
---- !u!114 &1382090332499737998
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 720689879827278129}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ef44c741dafe3044be6073dfda4c339, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _connectionRadius: 0
-  _swingForce: 0
-  _layer:
-    serializedVersion: 2
-    m_Bits: 0
 --- !u!1 &823614098964289426
 GameObject:
   m_ObjectHideFlags: 0
@@ -668,7 +654,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2966282474094860651, guid: 17694e7827c02604380e55861af5f08f, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4982971768633383610, guid: 17694e7827c02604380e55861af5f08f, type: 3}
       propertyPath: m_Name

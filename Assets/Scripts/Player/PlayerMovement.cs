@@ -7,6 +7,7 @@
  */
 
 using System.Collections;
+using Health;
 using UnityEngine;
 
 namespace Player
@@ -15,8 +16,8 @@ namespace Player
 	{
 		//Scriptable object which holds all the player's movement parameters. If you don't want to use it
 		//just paste in all the parameters, though you will need to manuly change all references in this script
+		[SerializeField] private HealthProcessor health;
 		public PlayerData Data;
-
 		public Vector3 GroundChechPos => _groundCheckPoint.transform.position;
 
 		#region COMPONENTS
@@ -97,6 +98,8 @@ namespace Player
 
 		private void Update()
 		{
+			if (health.IsDeath) return;
+			
 			HandleWallClimbing();
 
 			#region TIMERS
@@ -309,6 +312,8 @@ namespace Player
 
 		private void FixedUpdate()
 		{
+			if (health.IsDeath) return;
+			
 			//Handle Run
 			if (!IsDashing)
 			{

@@ -13,6 +13,7 @@ public class EnemyAI : MonoBehaviour
     [Header("Enemy parameters")] [SerializeField]
     private float damage;
 
+    [SerializeField] private HealthProcessor health;
     [SerializeField] private float attackDelay;
     [SerializeField] private float walkSpeed;
     [SerializeField] private float runSpeed;
@@ -42,11 +43,14 @@ public class EnemyAI : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (health.IsDeath) return;
         _stateMachine.FixedExecute();
     }
 
     private void Update()
     {
+        if (health.IsDeath) return;
+        
         _stateMachine.Execute();
 
         if (IsFall())
