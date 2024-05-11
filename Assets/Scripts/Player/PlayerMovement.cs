@@ -7,6 +7,7 @@
  */
 
 using System.Collections;
+using Health;
 using UnityEngine;
 
 namespace Player
@@ -15,8 +16,10 @@ namespace Player
 	{
 		//Scriptable object which holds all the player's movement parameters. If you don't want to use it
 		//just paste in all the parameters, though you will need to manuly change all references in this script
+		[SerializeField] private HealthProcessor health;
+		[SerializeField] private AudioSource stepsAudio, jumpAudio, landAudio;
+		
 		public PlayerData Data;
-
 		public Vector3 GroundChechPos => _groundCheckPoint.transform.position;
 
 		#region COMPONENTS
@@ -97,6 +100,8 @@ namespace Player
 
 		private void Update()
 		{
+			if (health.IsDeath) return;
+			
 			HandleWallClimbing();
 
 			#region TIMERS
@@ -112,6 +117,10 @@ namespace Player
 			#region INPUT HANDLER
 			_moveInput.x = Input.GetAxisRaw("Horizontal");
 			_moveInput.y = Input.GetAxisRaw("Vertical");
+
+			if (!IsJumping && !IsSliding && !IsWallClimbing && !IsWallJumping && (Mathf.Abs(_moveInput.x) > 0 || IsWallClimbing))
+				stepsAudio.mute = false;
+			else stepsAudio.mute = true;
 
 			if (_moveInput.x != 0)
 				CheckDirectionToFace(_moveInput.x > 0);
@@ -141,6 +150,7 @@ namespace Player
 					if (LastOnGroundTime < -0.1f)
 					{
 						AnimHandler.justLanded = true;
+						landAudio.Play();
 					}
 
 					LastOnGroundTime = Data.coyoteTime; //if so sets the lastGrounded to coyoteTime
@@ -309,6 +319,8 @@ namespace Player
 
 		private void FixedUpdate()
 		{
+			if (health.IsDeath) return;
+			
 			//Handle Run
 			if (!IsDashing)
 			{
@@ -425,18 +437,25 @@ namespace Player
 
 		private void Turn()
 		{
-			//stores scale and flips the player along the x axis, 
-			Vector3 scale = transform.localScale;
-			scale.x *= -1;
-			transform.localScale = scale;
-
+			transform.localRotation = new Quaternion(0, _moveInput.x < 0 ? -1 : 0, 0, 0);
 			IsFacingRight = !IsFacingRight;
 		}
+		
+		// private void Turn()
+		// {
+		// 	//stores scale and flips the player along the x axis, 
+		// 	Vector3 scale = transform.localScale;
+		// 	scale.x *= -1;
+		// 	transform.localScale = scale;
+		//
+		// 	IsFacingRight = !IsFacingRight;
+		// }
 		#endregion
 
 		#region JUMP METHODS
 		private void Jump()
 		{
+			jumpAudio.Play();
 			//Ensures we can't call Jump multiple times from one press
 			LastPressedJumpTime = 0;
 			LastOnGroundTime = 0;
@@ -603,14 +622,16 @@ namespace Player
 
 		private void HandleWallClimbing()
 		{
-			if (CanStartWallClinging())
+			AnimHandler.anim.SetBool("IsClimbing", IsWallClimbing);
+			
+			if (CanWallClimbing())
 			{
 				// Применить логику лазания по стене, включая движение вверх/вниз по стене и обработку прыжка от стены
-				if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.J))
+				if (Input.GetKeyDown(KeyCode.Space))
 				{
 					// Выполнить прыжок от стены
 					WallJump(1); ///////////
-					StopWallClinging();
+					StopWallClimbing();
 				}
 				else if (Input.GetKey(KeyCode.W))
 				{
@@ -619,19 +640,22 @@ namespace Player
 					RB.velocity = new Vector2(RB.velocity.x, Data.wallClimbSpeed);
 				}
 			}
+			
+			if (IsWallClimbing)
+				if (Input.GetKeyUp(KeyCode.W) || !CanWallClimbing()) StopWallClimbing();
 		}
 
-		private bool CanStartWallClinging()
+		private bool CanWallClimbing()
 		{
 			if (IsDashing)  // Не давайте начать лазать по стене во время дэша
 			{
 				return false;
 			}
 
-			if (IsJumping && RB.velocity.y > 0)  // Если игрок уже в состоянии прыжка, отключите лазание по стене
-			{
-				return false;
-			}
+			// if (IsJumping && RB.velocity.y > 0)  // Если игрок уже в состоянии прыжка, отключите лазание по стене
+			// {
+			// 	return false;
+			// }
 
 			if (LastOnWallRightTime > 0 || LastOnWallLeftTime > 0)
 			{
@@ -644,17 +668,13 @@ namespace Player
 
 		private void StartWallClinging()
 		{
-			// Начать лазить по стене
 			IsWallClimbing = true;
-			// Отключите гравитацию по умолчанию, чтобы игрок не падал вниз
 			SetGravityScale(0);
 		}
 
-		private void StopWallClinging()
+		private void StopWallClimbing()
 		{
-			// Прекратить лазить по стене
 			IsWallClimbing = false;
-			// Вернуть обычное значение гравитации
 			SetGravityScale(Data.gravityScale);
 		}
 

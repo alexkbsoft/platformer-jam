@@ -12,7 +12,7 @@ namespace Melee
 
         private void Update()
         {
-            if (Input.GetMouseButtonUp(1)) Attack();
+            if (Input.GetMouseButtonUp(0)) Attack();
         }
 
         private void Attack()
@@ -20,6 +20,7 @@ namespace Melee
             if (_isCooldown) return;
 
             AnimateSword();
+            PlaySoundWeapon();
             
             var colliders = Physics2D.OverlapCircleAll(transform.position, attackRadius, layer);
 
