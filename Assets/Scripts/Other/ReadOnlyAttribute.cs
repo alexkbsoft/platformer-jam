@@ -12,6 +12,9 @@ namespace Other
 	/// Allows you to add '[ReadOnly]' before a variable so that it is shown but not editable in the inspector.
 	/// Small but useful script, to make your inspectors look pretty and useful :D
 	/// </summary>
+	/// 
+#if (UNITY_EDITOR)
+
 	[CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
 	public class ReadOnlyPropertyDrawer : PropertyDrawer
 	{
@@ -22,6 +25,6 @@ namespace Other
 			GUI.enabled = true;
 		}
 	}
-
-// Learn More with this Tutorial: https://youtu.be/r3nwTGLHygI
+#endif
+	// Learn More with this Tutorial: https://youtu.be/r3nwTGLHygI
 }
