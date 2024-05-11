@@ -16,6 +16,9 @@ namespace Health
         [SerializeField] private Transform spawnPoint;
         [SerializeField] private SpriteRenderer renderer;
         [SerializeField] private Animator animator;
+        [SerializeField] private Transform _spawnPoint;
+        [SerializeField] private AudioSource deathSound;
+        [SerializeField] private AudioSource hitSound;
 
         private bool _canDamage = true;
         
@@ -37,6 +40,7 @@ namespace Health
         {
             if (!_canDamage) return;
             
+            hitSound.Play();
             AddValue(-value);
             StartCoroutine(DamageRollback());
         }
@@ -53,7 +57,12 @@ namespace Health
         }
 
         private float GetPercentageRation() => CurrentValue / MaxValue * 100;
-        private void Death() => StartCoroutine(spawnPoint ? CleaningOfCorpses(Respawn) : CleaningOfCorpses(Disable));
+        
+        private void Death()
+        {
+            deathSound.Play();
+            StartCoroutine(spawnPoint ? CleaningOfCorpses(Respawn) : CleaningOfCorpses(Disable));
+        }
 
         private void Respawn()
         {

@@ -29,9 +29,8 @@ namespace Shoot
             bullet.Damage = this.Damage;
 
             AnimateSword();
-
+            PlaySoundWeapon();
             bullet.Launch(transform.right, shootForce);
-
             StartCoroutine(Cooldown());
         }
 
