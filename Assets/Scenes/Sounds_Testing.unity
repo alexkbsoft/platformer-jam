@@ -25209,6 +25209,14 @@ PrefabInstance:
       value: Sounds
       objectReference: {fileID: 0}
     - target: {fileID: 4046940760375710881, guid: f80b5022d7b211245bad162787328dcd, type: 3}
+      propertyPath: m_Size.x
+      value: 8.97
+      objectReference: {fileID: 0}
+    - target: {fileID: 4046940760375710881, guid: f80b5022d7b211245bad162787328dcd, type: 3}
+      propertyPath: m_Size.y
+      value: 7.53
+      objectReference: {fileID: 0}
+    - target: {fileID: 4046940760375710881, guid: f80b5022d7b211245bad162787328dcd, type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 43cb1aa7f67c6b84aa5d8725aef19e00, type: 3}
@@ -25223,6 +25231,10 @@ PrefabInstance:
     - target: {fileID: 4046940760375710881, guid: f80b5022d7b211245bad162787328dcd, type: 3}
       propertyPath: m_SortingLayerID
       value: -955069333
+      objectReference: {fileID: 0}
+    - target: {fileID: 4046940760375710881, guid: f80b5022d7b211245bad162787328dcd, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4046940760375710881, guid: f80b5022d7b211245bad162787328dcd, type: 3}
       propertyPath: m_Materials.Array.data[0]
