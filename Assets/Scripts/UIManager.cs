@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,9 @@ public class UIManager : MonoBehaviour
 {
     [SerializeField] private GameObject _menuPanel;
     [SerializeField] private GameObject _upgradePanel;
+    [SerializeField] private GameObject _victoryPanel;
+    [SerializeField] private GameObject _introPanel;
+    [SerializeField] private List<GameObject> _relics;
     [SerializeField] private Player.PlayerMovement _player;
     [SerializeField] private Player.PlayerData _defaultPlayerData;
     [SerializeField] private MetaData _metaData;
@@ -39,6 +43,7 @@ public class UIManager : MonoBehaviour
             EventBus.Instance = GetComponent<EventBus>();
         }
         EventBus.Instance.OnSoulCollect.AddListener(OnSoulCollect);
+        EventBus.Instance.OnRelicCollect.AddListener(OnRelicCollect);
         EventBus.Instance.ShowUpgrades.AddListener(OnShowUpgrades);
         _buttons.Add(_runButton);
         _buttons.Add(_jumpButton);
@@ -51,6 +56,7 @@ public class UIManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        _introPanel.SetActive(true);
         UpdateUI();
     }
 
@@ -58,6 +64,15 @@ public class UIManager : MonoBehaviour
     void Update()
     {
 
+    }
+
+    private void OnRelicCollect()
+    {
+        _metaData.Relics++;
+        for(int i=0; i< _metaData.Relics; i++)
+        {
+            _relics[i].SetActive(true);
+        }
     }
 
     public void MenuEnter()
@@ -83,11 +98,105 @@ public class UIManager : MonoBehaviour
         UpdateUpgradeButton(_jumpButton, _metaData.JumpLevel, _jumpUpgrades);
         UpdateUpgradeButton(_climbButton, _metaData.ClimbLevel, _climbUpgrades);
         UpdateUpgradeButton(_rangeAttackButton, _metaData.RangeAttackLevel, _rangeAttackUpgrades);
-        UpdateUpgradeButton(_attackButton, _metaData.AttackLevel, _runUpgrades);
-        UpdateUpgradeButton(_dashButton, _metaData.DashLevel, _runUpgrades);
-        UpdateUpgradeButton(_doubleJumpButton, _metaData.BonusJumps, _runUpgrades);
+        UpdateUpgradeButton(_attackButton, _metaData.AttackLevel, _attackUpgrades);
+        UpdateUpgradeButton(_dashButton, _metaData.DashLevel, _dashUpgrades);
+        UpdateUpgradeButton(_doubleJumpButton, _metaData.BonusJumps, _doubleJumpUpgrades);
 
-        _upgradePanel.SetActive(state);
+        Health.HealthProcessor HP = _player.GetComponent<Health.HealthProcessor>();
+        HP.TakeHeal(100);
+
+        if (_metaData.Relics >= 3)
+        {
+            _victoryPanel.SetActive(true);
+        }
+        else
+        {
+            _upgradePanel.SetActive(state);
+        }
+    }
+
+    public void Upgrade(int index)
+    {
+        switch (index) {
+            case 0:
+                if (_runUpgrades[_metaData.RunLevel].Cost <= _metaData.SoulShards)
+                {
+                    _metaData.SoulShards -= _runUpgrades[_metaData.RunLevel].Cost;
+                    _player.Data.runMaxSpeed += 0.2f * 20 * _runUpgrades[_metaData.RunLevel].Value;
+                    _metaData.RunLevel++;
+                }
+                break;
+            case 1:
+                if (_jumpUpgrades[_metaData.JumpLevel].Cost <= _metaData.SoulShards)
+                {
+                    _metaData.SoulShards -= _jumpUpgrades[_metaData.JumpLevel].Cost;
+                    _player.Data.jumpHeight += 0.2f * 10 * _jumpUpgrades[_metaData.JumpLevel].Value;
+                    _metaData.JumpLevel++;
+                }
+                break;
+            case 2:
+                if (_climbUpgrades[_metaData.ClimbLevel].Cost <= _metaData.SoulShards)
+                {
+                    _metaData.SoulShards -= _climbUpgrades[_metaData.ClimbLevel].Cost;
+                    _player.Data.wallClimbSpeed += 0.2f * 8 * _climbUpgrades[_metaData.ClimbLevel].Value;
+                    _metaData.ClimbLevel++;
+                }
+                break;
+            case 3: 
+                if (_rangeAttackUpgrades[_metaData.RangeAttackLevel].Cost <= _metaData.SoulShards)
+                {
+                    _metaData.SoulShards -= _rangeAttackUpgrades[_metaData.RangeAttackLevel].Cost;
+
+                    _metaData.RangeAttack += Mathf.RoundToInt(0.2f * 20 * _rangeAttackUpgrades[_metaData.RangeAttackLevel].Value);
+                    _metaData.RangeAttackLevel++;
+                    SetStats();
+                }
+                break;
+            case 4: 
+                if (_attackUpgrades[_metaData.AttackLevel].Cost <= _metaData.SoulShards)
+                {
+                    _metaData.SoulShards -= _attackUpgrades[_metaData.AttackLevel].Cost;
+
+                    _metaData.Attack += Mathf.RoundToInt(0.2f * 100 * _attackUpgrades[_metaData.AttackLevel].Value);
+                    _metaData.AttackLevel++;
+                    SetStats();
+                }
+                break;
+            case 5:
+                if (_dashUpgrades[_metaData.DashLevel].Cost <= _metaData.SoulShards)
+                {
+                    _metaData.SoulShards -= _dashUpgrades[_metaData.DashLevel].Cost;
+
+                    _player.Data.dashAmount = 1;
+                    _player.Data.dashSpeed += Mathf.RoundToInt(0.2f * 55 * _dashUpgrades[_metaData.DashLevel].Value);
+                    _metaData.DashLevel++;
+                    SetStats();
+                }
+                break;
+            case 6:
+                if (_doubleJumpUpgrades[_metaData.BonusJumps].Cost <= _metaData.SoulShards)
+                {
+                    _metaData.SoulShards -= _doubleJumpUpgrades[_metaData.BonusJumps].Cost;
+                    _metaData.BonusJumps = 1;
+                    _player.Data.BonusJumpCount = 1;
+                    SetStats();
+                }
+                break;
+            default: break;
+        }
+
+        ShowUpgrades(true);
+    }
+
+    private void SetStats()
+    {
+        GameObject gunGO = GameObject.Find("Gun");
+        Shoot.Gun gun = gunGO.GetComponent<Shoot.Gun>();
+        gun.Damage = _metaData.RangeAttack;
+
+        GameObject SwordGO = GameObject.Find("Sword");
+        Melee.Sword sword = SwordGO.GetComponent<Melee.Sword>();
+        sword.Damage = _metaData.Attack;
     }
 
     private void OnShowUpgrades()
@@ -110,7 +219,7 @@ public class UIManager : MonoBehaviour
     private void UpdateUpgradeButton(Button Button, int level, List<Upgrade> upgrades)
     {
         TMP_Text levelText = Button.transform.Find("Level").GetComponent<TMP_Text>();
-        levelText.text = "сп:" + level.ToString();
+        levelText.text = "сп: " + level.ToString();
         if (upgrades.Count == level)
         {
             Button.interactable = false;
@@ -118,7 +227,7 @@ public class UIManager : MonoBehaviour
         else
         {
             TMP_Text costText = Button.transform.Find("Cost").GetComponent<TMP_Text>();
-            costText.text = upgrades[level].ToString();
+            costText.text = upgrades[level].Cost.ToString();
         }
     }
 
@@ -139,6 +248,8 @@ public class UIManager : MonoBehaviour
         _metaData.ClimbLevel = 0;
         _metaData.RangeAttackLevel = 0;
         _metaData.AttackLevel = 1;
+        _metaData.Attack = 100;
+        _metaData.RangeAttack = 20;
     }
 
     [ContextMenu("Give Souls")]
@@ -148,6 +259,7 @@ public class UIManager : MonoBehaviour
     }
 }
 
+[Serializable]
 public struct Upgrade {
     public int Cost;
     public int Value;

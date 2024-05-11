@@ -16,4 +16,7 @@ public class MetaData : ScriptableObject
     public int ClimbLevel = 0;
     public int RangeAttackLevel = 0;
     public int AttackLevel = 1;
+    public int Health = 100;
+    public int Attack = 100;
+    public int RangeAttack = 20;
 }

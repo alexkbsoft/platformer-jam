@@ -80,7 +80,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c857a6f5e84e8214696ddddba02de273, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxHealth: 5
+  _maxHealth: 50
   _currentHealth: 0
   _target: {fileID: 0}
   _visionDistance: 60

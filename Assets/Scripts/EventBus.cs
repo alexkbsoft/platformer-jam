@@ -9,6 +9,7 @@ public class EventBus : MonoBehaviour
 
     public UnityEvent<int> OnSoulCollect;
     public UnityEvent ShowUpgrades;
+    public UnityEvent OnRelicCollect;
 
     private void Awake()
     {

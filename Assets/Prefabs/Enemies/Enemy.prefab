@@ -584,7 +584,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35cc56707fd24426a61011260d80cb5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 18
+  damage: 10
   health: {fileID: 5552718617363202684}
   attackDelay: 1.5
   walkSpeed: 90
@@ -632,13 +632,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Bar>k__BackingField: {fileID: 1316212553350074409}
-  <MaxValue>k__BackingField: 100
-  currentValue: 100
+  <MaxValue>k__BackingField: 750
+  currentValue: 750
   damageCooldown: 1
   deathDelay: 5
   spawnPoint: {fileID: 0}
   renderer: {fileID: 4270214541571441629}
-  animator: {fileID: 311131743384340538} 
+  animator: {fileID: 311131743384340538}
   deathSound: {fileID: 4824752270531817331}
   hitSound: {fileID: 3905084747065756325}
 --- !u!1 &8608593342646621734

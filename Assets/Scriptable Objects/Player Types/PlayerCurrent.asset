@@ -52,4 +52,4 @@ MonoBehaviour:
   dashEndRunLerp: 0.47
   dashRefillTime: 0.1
   dashInputBufferTime: 0.12
-  wallClimbSpeed: 12
+  wallClimbSpeed: 0
