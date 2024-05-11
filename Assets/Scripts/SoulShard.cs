@@ -2,17 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NewBehaviourScript : MonoBehaviour
+[RequireComponent(typeof(AudioSource))]
+
+public class SoulShard : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private AudioSource _audio;
+    [SerializeField] private AudioClip _clip;
+
+    private void Awake()
     {
-        
+        _audio = GetComponent<AudioSource>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        
+        EventBus.Instance.OnSoulCollect.Invoke(1);
+        gameObject.SetActive(false);
+        _audio.PlayOneShot(_clip);
     }
 }

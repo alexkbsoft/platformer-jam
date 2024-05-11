@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9318b65df863b2469cb412b2b5c473c, type: 3}
+  m_Name: DefaultMeta
+  m_EditorClassIdentifier: 
+  SoulShards: 0
+  RelicPositions: []
+  Relics: 0
+  RunLevel: 1
+  JumpLevel: 1
+  BonusJumps: 0
+  DashLevel: 0
+  ClimbLevel: 0
+  RangeAttackLevel: 0
+  AttackLevel: 1
