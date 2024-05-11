@@ -20,7 +20,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Button _dashButton;
     [SerializeField] private Button _doubleJumpButton;
 
-    [SerializeField] private TMP_Text ShardCounter;
+    [SerializeField] private TMP_Text _shardCounter;
 
     [SerializeField] private List<Upgrade> _runUpgrades = new();
     [SerializeField] private List<Upgrade> _jumpUpgrades = new();
@@ -34,7 +34,12 @@ public class UIManager : MonoBehaviour
 
     private void Awake()
     {
+        if (EventBus.Instance == null)
+        {
+            EventBus.Instance = GetComponent<EventBus>();
+        }
         EventBus.Instance.OnSoulCollect.AddListener(OnSoulCollect);
+        EventBus.Instance.ShowUpgrades.AddListener(OnShowUpgrades);
         _buttons.Add(_runButton);
         _buttons.Add(_jumpButton);
         _buttons.Add(_climbButton);
@@ -46,13 +51,13 @@ public class UIManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        ShardCounter.text = _metaData.SoulShards.ToString();
+        UpdateUI();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void MenuEnter()
@@ -85,21 +90,27 @@ public class UIManager : MonoBehaviour
         _upgradePanel.SetActive(state);
     }
 
+    private void OnShowUpgrades()
+    {
+        ShowUpgrades(true);
+    }
+
     private void OnSoulCollect(int value)
     {
-
+        _metaData.SoulShards += 1;
+        UpdateUI();
     }
 
     private void UpdateUI()
     {
-
+        _shardCounter.text = _metaData.SoulShards.ToString();
     }
 
 
     private void UpdateUpgradeButton(Button Button, int level, List<Upgrade> upgrades)
     {
         TMP_Text levelText = Button.transform.Find("Level").GetComponent<TMP_Text>();
-        levelText.text = "сп:"+level.ToString();
+        levelText.text = "сп:" + level.ToString();
         if (upgrades.Count == level)
         {
             Button.interactable = false;
@@ -128,7 +139,13 @@ public class UIManager : MonoBehaviour
         _metaData.ClimbLevel = 0;
         _metaData.RangeAttackLevel = 0;
         _metaData.AttackLevel = 1;
-}
+    }
+
+    [ContextMenu("Give Souls")]
+    public void GiveSouls()
+    {
+        _metaData.SoulShards += 100;
+    }
 }
 
 public struct Upgrade {
