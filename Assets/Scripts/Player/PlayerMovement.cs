@@ -16,7 +16,7 @@ namespace Player
 		//Scriptable object which holds all the player's movement parameters. If you don't want to use it
 		//just paste in all the parameters, though you will need to manuly change all references in this script
 		public PlayerData Data;
-		[SerializeField] private AudioSource stepsAudio;
+		[SerializeField] private AudioSource stepsAudio, jumpAudio, landAudio;
 		public Vector3 GroundChechPos => _groundCheckPoint.transform.position;
 
 		#region COMPONENTS
@@ -113,7 +113,7 @@ namespace Player
 			_moveInput.x = Input.GetAxisRaw("Horizontal");
 			_moveInput.y = Input.GetAxisRaw("Vertical");
 
-			if (!IsJumping && !IsSliding && !IsWallClimbing && !IsWallJumping && Mathf.Abs(_moveInput.x) > 0)
+			if (!IsJumping && !IsSliding && !IsWallClimbing && !IsWallJumping && (Mathf.Abs(_moveInput.x) > 0 || IsWallClimbing))
 				stepsAudio.mute = false;
 			else stepsAudio.mute = true;
 
@@ -145,6 +145,7 @@ namespace Player
 					if (LastOnGroundTime < -0.1f)
 					{
 						AnimHandler.justLanded = true;
+						landAudio.Play();
 					}
 
 					LastOnGroundTime = Data.coyoteTime; //if so sets the lastGrounded to coyoteTime
@@ -441,6 +442,7 @@ namespace Player
 		#region JUMP METHODS
 		private void Jump()
 		{
+			jumpAudio.Play();
 			//Ensures we can't call Jump multiple times from one press
 			LastPressedJumpTime = 0;
 			LastOnGroundTime = 0;

@@ -24,8 +24,12 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private float walkDistance = 1.5f;
     [SerializeField] private float stayDistance = 0.5f;
 
-    [Space] [Header("Target LayerMask")] [SerializeField]
-    private LayerMask layerMask;
+    [Space] [Header("Target LayerMask")] 
+    [SerializeField] private LayerMask layerMask;
+    
+    [Space] [Header("Sounds")] 
+    [SerializeField] private AudioSource attackSound;
+    [SerializeField] private AudioSource stepsSound;
 
     private PersonStateMachine _stateMachine;
     private Collider2D _target;
@@ -49,6 +53,8 @@ public class EnemyAI : MonoBehaviour
     {
         _stateMachine.Execute();
 
+        stepsSound.mute = Mathf.Abs(_rbody.velocity.x) <= 0;
+        
         if (IsFall())
         {
             Fall();
@@ -107,6 +113,7 @@ public class EnemyAI : MonoBehaviour
     {
         if (_isDelayedAttack || _target.GetComponent<HealthProcessor>() == null) return;
 
+        attackSound.Play();
         _stateMachine.ChangeState(new AttackState(transform, _target.transform, damage, walkSpeed, stayDistance, _rbody, _animator));
         StartCoroutine(AttackDelay());
     }

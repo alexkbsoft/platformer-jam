@@ -11,6 +11,8 @@ namespace Health
         [SerializeField] private float DamageRollbackDelaly = 1.5f;
         [SerializeField] private Transform _spawnPoint;
         [SerializeField] private SpriteRenderer _renderer;
+        [SerializeField] private AudioSource deathSound;
+        [SerializeField] private AudioSource hitSound;
 
         private bool _canDamage = true;
 
@@ -32,6 +34,7 @@ namespace Health
         {
             if (!_canDamage) return;
             
+            hitSound.Play();
             AddValue(-value);
             StartCoroutine(DamageRollback());
         }
@@ -51,6 +54,7 @@ namespace Health
 
         private void Death()
         {
+            deathSound.Play();
             if (_spawnPoint) Respawn();
             else gameObject.SetActive(false);
         }
