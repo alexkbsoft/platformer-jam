@@ -1,26 +1,31 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 namespace Health
 {
     public class HealthProcessor : MonoBehaviour
     {
+        public bool IsDeath { get; private set; }
         [field: SerializeField] private ValueBar Bar { get; set; }
         [field: SerializeField] private float MaxValue { get; set; }
+        
         [SerializeField] private float currentValue;
-        [SerializeField] private float DamageRollbackDelaly = 1.5f;
-        [SerializeField] private Transform _spawnPoint;
-        [SerializeField] private SpriteRenderer _renderer;
+        [SerializeField] private float damageCooldown = 1;
+        [SerializeField] private float deathDelay = 5;
+        [SerializeField] private Transform spawnPoint;
+        [SerializeField] private SpriteRenderer renderer;
+        [SerializeField] private Animator animator;
 
         private bool _canDamage = true;
-
+        
         private float CurrentValue
         {
             get => currentValue;
             set
             {
                 currentValue = Mathf.Clamp(value, MinValue, MaxValue);
-                if (value < 0) Death();
+                if (value < 0 && !IsDeath) Death();
             }
         }
         
@@ -48,26 +53,33 @@ namespace Health
         }
 
         private float GetPercentageRation() => CurrentValue / MaxValue * 100;
-
-        private void Death()
-        {
-            if (_spawnPoint) Respawn();
-            else gameObject.SetActive(false);
-        }
+        private void Death() => StartCoroutine(spawnPoint ? CleaningOfCorpses(Respawn) : CleaningOfCorpses(Disable));
 
         private void Respawn()
         {
-            transform.position = _spawnPoint.position;
+            IsDeath = false;
+            animator.CrossFade("idle", 0);
+            transform.position = spawnPoint.position;
             TakeHeal(MaxValue);
         }
 
+        private void Disable() => gameObject.SetActive(false);
+        
+        private IEnumerator CleaningOfCorpses(Action a)
+        {
+            IsDeath = true;
+            animator.CrossFade("death", 0);
+            yield return new WaitForSeconds(deathDelay);
+            a.Invoke();
+        }
+        
         private IEnumerator DamageRollback()
         {
             _canDamage = false;
-            _renderer.color = Color.red;
-            yield return new WaitForSeconds(DamageRollbackDelaly);
+            renderer.color = Color.red;
+            yield return new WaitForSeconds(damageCooldown);
             _canDamage = true;
-            _renderer.color = Color.white;
+            renderer.color = Color.white;
         }
     }
 }
