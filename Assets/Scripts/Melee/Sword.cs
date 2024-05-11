@@ -12,7 +12,7 @@ namespace Melee
 
         private void Update()
         {
-            if (Input.GetMouseButtonUp(1)) Attack();
+            if (Input.GetMouseButtonUp(0)) Attack();
         }
 
         private void Attack()

@@ -7,28 +7,50 @@ namespace Shoot
     public class Gun : Weapon
     {
         [SerializeField] private BulletPool bulletPool;
-        [SerializeField] private float shootForce;
+        [SerializeField] private float shootForce, rotationSpeed;
+        [SerializeField] private Transform gunPivot, character;
 
+        private Vector3 targetPosition;
+        
         private void Update()
         {
-            if (Input.GetMouseButtonUp(0)) Shoot();
+            SetTargetPosition();
+            RotateGun();
+
+            if (Input.GetMouseButtonUp(1)) Shoot();
         }
 
         private void Shoot()
         {
-            if (!bulletPool.HasBullets() || _isCooldown) return;
-            
+            if (!bulletPool.HasBullets() || _isCooldown || Damage <= 0) return;
+
             var bullet = bulletPool.GetBullet().GetComponent<Bullet>();
             bullet.transform.position = transform.position;
-            bullet.Damage = this.Damage;  
-            
+            bullet.Damage = this.Damage;
+
             AnimateSword();
-            
-            bullet.Launch(GetDirection(), shootForce);
+
+            bullet.Launch(transform.right, shootForce);
 
             StartCoroutine(Cooldown());
         }
-        
+
+        private void SetTargetPosition()
+        {
+            targetPosition = Input.mousePosition;
+            targetPosition.z = Vector3.Distance(transform.position, Camera.main.transform.position);
+            targetPosition = Camera.main.ScreenToWorldPoint(targetPosition);
+            targetPosition.z = 0f; // Учитываем, что пушка находится в плоскости xy
+        }
+
+        private void RotateGun()
+        {
+            Vector3 direction = targetPosition - transform.position;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            Quaternion targetRotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            gunPivot.transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+        }
+
         private Vector2 GetDirection()
         {
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
